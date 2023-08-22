@@ -1,7 +1,6 @@
-from flask import Flask, render_template
-from pymongo import MongoClient
+from flask import Flask
 from taskapp.views import taskapp
-
+from pymongo import MongoClient
 
 def create_app():
     app = Flask(__name__)
@@ -13,10 +12,8 @@ def create_app():
     # MongoDB configuration
     app.config["MONGO_URI"] = "mongodb://localhost:27017/taskapp"
     client = MongoClient(app.config["MONGO_URI"])
-    app.db = client.taskapp
+    app.db = client.get_database()
 
     app.register_blueprint(taskapp)
 
     return app
-
-    

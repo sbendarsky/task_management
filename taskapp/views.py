@@ -1,27 +1,23 @@
-from flask import Blueprint, render_template, current_app, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, current_app
+from taskapp.models import Task
 
 taskapp = Blueprint("main", __name__)
 
 @taskapp.route("/")
 def index():
-    # Use current_app to access the app instance
-    db = current_app.db
+    db = current_app.db  # Access the MongoDB connection from your Flask app
 
-    # Now you can work with the db object
-    tasks_collection = db.tasks
-    all_tasks = tasks_collection.find()
+    all_tasks = list(db.tasks.find())  # Retrieve all tasks from the database
 
     return render_template("index.html", tasks=all_tasks)
 
 @taskapp.route("/add_task", methods=["POST"])
 def add_task():
-    db = current_app.db
-
     if request.method == "POST":
         title = request.form.get("title")
         description = request.form.get("description")
-        
-        tasks_collection = db.tasks
-        tasks_collection.insert_one({"title": title, "description": description})
+
+        task_model = Task(current_app.db)  # Create an instance of the Task model
+        task_model.create_task(title, description)  # Call the method to create a task
 
     return redirect(url_for("main.index"))
