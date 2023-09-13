@@ -1,2 +1,2 @@
 # task_management
-task management app 
+simple API to manage tasks
